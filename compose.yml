@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - go-build:/go/pkg/mod
+    environment:
+      - GIN_MODE=debug
+
+volumes:
+  go-build:
