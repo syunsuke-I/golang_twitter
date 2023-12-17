@@ -9,7 +9,7 @@ services:
       - .:/app
       - go-build:/go/pkg/mod
     environment:
-      - GIN_MODE=debug
+      - GIN_MODE=release
 
 volumes:
   go-build:
