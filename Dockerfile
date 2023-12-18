@@ -1,3 +1,10 @@
+# db
+FROM postgres:14
+ENV POSTGRES_PASSWORD postgres
+RUN apt-get update && \
+  apt-get clean && \
+  rm -fr /var/lib/apt/lists/*
+
 # builder
 FROM golang:1.21-alpine AS builder
 WORKDIR /app
@@ -14,3 +21,4 @@ COPY --from=builder /app/go.mod .
 COPY --from=builder /app/go.sum .
 RUN go install github.com/cosmtrek/air@latest
 CMD ["air"]
+
