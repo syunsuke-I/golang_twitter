@@ -10,5 +10,6 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("frontend/templates/**/**")
 	router.GET("/signup", controllers.SignUp)
+	router.POST("/signup", controllers.UserCreate)
 	router.Run("0.0.0.0:8080")
 }
