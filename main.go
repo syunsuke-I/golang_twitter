@@ -8,7 +8,7 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob("frontend/templates/*.html")
+	router.LoadHTMLGlob("frontend/templates/**/**")
 	router.GET("/login", controllers.Login)
 	router.Run("0.0.0.0:8080")
 }

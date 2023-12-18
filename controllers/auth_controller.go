@@ -10,7 +10,7 @@ func Login(c *gin.Context) {
 
 	c.HTML(
 		http.StatusOK,
-		"index.html",
+		"sign_up/index.html",
 		gin.H{},
 	)
 }
