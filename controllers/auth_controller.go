@@ -19,7 +19,12 @@ func SignUp(c *gin.Context) {
 
 func UserCreate(c *gin.Context) {
 
-	if err := models.CreateUser(c.PostForm("email"), c.PostForm("password")); err != nil {
+	user := models.User{
+		Email:    c.PostForm("email"),
+		Password: c.PostForm("password"),
+	}
+
+	if _, err := models.CreateUser(&user); err != nil {
 		log.Println(err)
 	}
 
