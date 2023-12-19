@@ -1,13 +1,16 @@
 package models
 
 import (
-	"database/sql"
+	"crypto/sha1"
 	"fmt"
-	"log"
+
+	"gorm.io/driver/postgres"
+
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
-var Db *sql.DB
-var err error
+var DB *gorm.DB
 
 const (
 	host          = "postgres"
@@ -19,22 +22,40 @@ const (
 )
 
 func Init() {
-	// 接続文字列を作成
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	// PostgreSQLに接続
-	Db, err = sql.Open("postgres", psqlInfo)
+	ConnectionDatabase()
+	CreateTables()
+}
+
+func ConnectionDatabase() {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s "+
+		"dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		host, user, password, dbname, port)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		panic("failed to connected to database!")
 	}
+	DB = db
+	fmt.Println("connected to db is seceded!")
+}
 
-	// 接続を確認
-	err = Db.Ping()
-	if err != nil {
-		log.Fatal("接続失敗:", err)
-	}
+func CreateTables() {
+	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    password TEXT,
+    created_at TIMESTAMP
+	)`, tableNameUser)
 
-	fmt.Println("接続成功!")
+	DB.Exec(cmdU)
+}
 
+// 暗号(Hash)化
+func Encrypt(plaintext string) (cryptext string) {
+	cryptext = fmt.Sprintf("%x", sha1.Sum([]byte(plaintext)))
+	return cryptext
+}
+
+// 暗号(Hash)と入力された平パスワードの比較
+func CompareHashAndPassword(hash, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }

@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/syunsuke-I/golang_twitter/models"
 )
 
 func SignUp(c *gin.Context) {
@@ -18,9 +19,12 @@ func SignUp(c *gin.Context) {
 
 func UserCreate(c *gin.Context) {
 
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+	if err := models.CreateUser(c.PostForm("email"), c.PostForm("password")); err != nil {
+		log.Println(err)
+	}
 
-	fmt.Println(email)
-	fmt.Println(password)
+	c.Redirect(
+		http.StatusMovedPermanently,
+		"signup",
+	)
 }
