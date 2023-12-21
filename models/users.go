@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"time"
 
@@ -39,29 +40,37 @@ func CreateUser(u *User) (*User, error) {
 }
 
 func (u User) Validate() error {
+	errMsg, err := LoadConfig("settings/error_messages.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+	}
 	return validation.ValidateStruct(&u,
 		validation.Field(
 			&u.Email,
-			validation.Required.Error("メールアドレスは必須入力です"),
-			validation.RuneLength(5, 254).Error("メールアドレスは 5~254 文字です"), // RFC 5321 に準拠
-			is.Email.Error("メールアドレスの形式を確認してください"),
+			validation.Required.Error(errMsg.EmailRequired),
+			validation.RuneLength(5, 254).Error(errMsg.EmailLength), // RFC 5321 に準拠
+			is.Email.Error(errMsg.EmailFormat),
 		),
 		validation.Field(
 			&u.Password,
-			validation.Required.Error("パスワードは必須入力です"),
-			validation.RuneLength(8, 20).Error("パスワードは 8~20 文字です"),
-			validation.Match(regexp.MustCompile(`[A-Za-z]`)).Error("パスワードには 半角英字 を少なくとも1つ含んで下さい"),
-			validation.Match(regexp.MustCompile(`\d`)).Error("パスワードには 半角数字 を少なくとも1つ含んで下さい"),
-			validation.Match(regexp.MustCompile(`[!?\\-_]`)).Error("パスワードには !?-_ を少なくとも1つ含んで下さい"),
+			validation.Required.Error(errMsg.PasswordRequired),
+			validation.RuneLength(8, 20).Error(errMsg.PasswordLength),
+			validation.Match(regexp.MustCompile(`[A-Za-z]`)).Error(errMsg.PasswordAlphabet),
+			validation.Match(regexp.MustCompile(`\d`)).Error(errMsg.PasswordNumber),
+			validation.Match(regexp.MustCompile(`[!?\\-_]`)).Error(errMsg.PasswordSpecialChar),
 		),
 	)
 }
 
 func TranslateErrors(value *gorm.DB) error {
+	errMsg, err := LoadConfig("settings/error_messages.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+	}
 	if err, ok := value.Error.(*pgconn.PgError); ok {
 		switch err.Code {
 		case pgerrcode.UniqueViolation:
-			return errors.New("そのメールアドレスは既に使われています")
+			return errors.New(errMsg.EmailInUse)
 		}
 	}
 	return value.Error
