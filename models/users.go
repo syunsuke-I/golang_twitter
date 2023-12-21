@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"regexp"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -48,7 +49,10 @@ func (u User) Validate() error {
 		validation.Field(
 			&u.Password,
 			validation.Required.Error("パスワードは必須入力です"),
-			validation.RuneLength(8, 20).Error("パスワードは 8=20 文字です"),
+			validation.RuneLength(8, 20).Error("パスワードは 8~20 文字です"),
+			validation.Match(regexp.MustCompile(`[A-Za-z]`)).Error("パスワードには 半角英字 を少なくとも1つ含んで下さい"),
+			validation.Match(regexp.MustCompile(`\d`)).Error("パスワードには 半角数字 を少なくとも1つ含んで下さい"),
+			validation.Match(regexp.MustCompile(`[!?\\-_]`)).Error("パスワードには !?-_ を少なくとも1つ含んで下さい"),
 		),
 	)
 }
