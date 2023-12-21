@@ -1,17 +1,5 @@
 {{ define "sign_up/index.html"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>サインアップ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<style>
-  .body{
-    background-color: #15202B;
-  }
-</style>
+{{ template "common/header.html" .}}
 <body class="bg-black">
   {{ if .errorMessages }}
     <div class="bg-red-600 text-white px-5 py-3 rounded relative mb-4" role="alert">
