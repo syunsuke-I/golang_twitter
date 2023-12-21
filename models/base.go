@@ -41,7 +41,7 @@ func ConnectionDatabase() {
 func CreateTables() {
 	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
     id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     password TEXT,
     created_at TIMESTAMP
 	)`, tableNameUser)

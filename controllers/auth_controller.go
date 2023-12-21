@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,8 +23,16 @@ func UserCreate(c *gin.Context) {
 		Password: c.PostForm("password"),
 	}
 
-	if _, err := models.CreateUser(&user); err != nil {
-		log.Println(err)
+	if _, errorMessages := models.CreateUser(&user); errorMessages != nil {
+		// エラーメッセージを取得
+		messages := []string{errorMessages.Error()}
+
+		// 同じサインアップページを再度レンダリングし、エラーメッセージを渡す
+		c.HTML(http.StatusBadRequest, "sign_up/index.html", gin.H{
+			"errorMessages": messages,
+			"User":          user,
+		})
+		return
 	}
 
 	c.Redirect(
