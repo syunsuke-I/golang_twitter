@@ -13,6 +13,7 @@ func main() {
 
 	// ルーティング
 	router := gin.Default()
+	router.Static("/frontend", "./frontend")
 	router.LoadHTMLGlob("frontend/templates/**/**")
 	router.GET("/signup", controllers.SignUp)
 	router.POST("/signup", controllers.UserCreate)
