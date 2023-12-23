@@ -1,24 +1,30 @@
+// auth_controller.go
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	database "github.com/syunsuke-I/golang_twitter/db"
 	"github.com/syunsuke-I/golang_twitter/models"
-	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+type ErrorMsg struct {
+	EmailRequired       string `json:"emailRequired"`
+	EmailFormat         string `json:"emailFormat"`
+	PasswordRequired    string `json:"passwordRequired"`
+	PasswordLength      string `json:"passwordLength"`
+	PasswordAlphabet    string `json:"passwordAlphabet"`
+	PasswordMixedCase   string `json:"passwordMixedCase"`
+	PasswordNumber      string `json:"passwordNumber"`
+	PasswordSpecialChar string `json:"passwordSpecialChar"`
+	EmailInUse          string `json:"emailInUse"`
+}
 
-func Init() {
-	var err error
-	db, err = models.OpenDatabaseConnection()
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-	repo := models.NewRepository(db)
-	repo.CreateTables()
+var db *database.Database
+
+func Init(database *database.Database) {
+	db = database
 }
 
 func SignUp(c *gin.Context) {
@@ -31,19 +37,14 @@ func SignUp(c *gin.Context) {
 }
 
 func UserCreate(c *gin.Context) {
-
-	repo := models.NewRepository(GetDB())
-
+	repo := models.NewRepository(db.DB)
 	user := models.User{
 		Email:    c.PostForm("email"),
 		Password: c.PostForm("password"),
 	}
 
 	if _, errorMessages := repo.CreateUser(&user); errorMessages != nil {
-		// エラーメッセージを取得
 		messages := []string{errorMessages.Error()}
-
-		// 同じサインアップページを再度レンダリングし、エラーメッセージを渡す
 		c.HTML(http.StatusBadRequest, "sign_up/index.html", gin.H{
 			"errorMessages": messages,
 			"User":          user,
@@ -51,12 +52,5 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(
-		http.StatusMovedPermanently,
-		"signup",
-	)
-}
-
-func GetDB() *gorm.DB {
-	return db
+	c.Redirect(http.StatusMovedPermanently, "signup")
 }

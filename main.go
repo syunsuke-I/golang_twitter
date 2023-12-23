@@ -1,25 +1,33 @@
+// main.go
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
-
 	"github.com/syunsuke-I/golang_twitter/controllers"
-	"github.com/syunsuke-I/golang_twitter/models"
-
-	_ "github.com/lib/pq"
+	database "github.com/syunsuke-I/golang_twitter/db"
 )
 
 func main() {
 
-	// ルーティング
-	router := gin.Default()
-	router.Static("/frontend", "./frontend")
-	router.LoadHTMLGlob("frontend/templates/**/**")
-	router.GET("/signup", controllers.SignUp)
-	router.POST("/signup", controllers.UserCreate)
+	r := gin.Default()
+	r.Static("/frontend", "./frontend")
+	r.LoadHTMLGlob("frontend/templates/**/**")
 
-	// DBの初期化
-	models.Init()
+	// データベース接続の初期化
+	db := database.NewDatabase()
+	defer db.Close()
 
-	router.Run("0.0.0.0:8080")
+	if err := db.CreateTables(); err != nil {
+		log.Fatalf("Failed to create tables: %v", err)
+	}
+
+	controllers.Init(db)
+
+	// ルーティング設定
+	r.GET("/signup", controllers.SignUp)
+	r.POST("/signup", controllers.UserCreate)
+
+	r.Run(":8080")
 }
