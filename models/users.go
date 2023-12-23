@@ -20,7 +20,7 @@ type User struct {
 	CreatedAt time.Time
 }
 
-func CreateUser(u *User) (*User, error) {
+func (p *Repository) CreateUser(u *User) (*User, error) {
 	// ユーザーのバリデーション
 	if err := u.Validate(); err != nil {
 		return nil, err
@@ -30,8 +30,7 @@ func CreateUser(u *User) (*User, error) {
 		Email:    u.Email,
 		Password: Encrypt(u.Password),
 	}
-	result := DB.Create(&entry)
-
+	result := repo.DB.Create(&entry)
 	if result.Error != nil {
 		return nil, TranslateErrors(result)
 	}
@@ -48,7 +47,6 @@ func (u User) Validate() error {
 		validation.Field(
 			&u.Email,
 			validation.Required.Error(errMsg.EmailRequired),
-			validation.RuneLength(5, 254).Error(errMsg.EmailLength), // RFC 5321 に準拠
 			is.Email.Error(errMsg.EmailFormat),
 		),
 		validation.Field(
@@ -58,6 +56,8 @@ func (u User) Validate() error {
 			validation.Match(regexp.MustCompile(`[A-Za-z]`)).Error(errMsg.PasswordAlphabet),
 			validation.Match(regexp.MustCompile(`\d`)).Error(errMsg.PasswordNumber),
 			validation.Match(regexp.MustCompile(`[!?\\-_]`)).Error(errMsg.PasswordSpecialChar),
+			validation.Match(regexp.MustCompile(`[A-Z]`)).Error(errMsg.PasswordMixedCase),
+			validation.Match(regexp.MustCompile(`[a-z]`)).Error(errMsg.PasswordMixedCase),
 		),
 	)
 }

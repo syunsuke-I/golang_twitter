@@ -11,6 +11,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
+# ソースの変更後にテストを実行するため
+RUN go test ./models
 RUN go build -o main ./main.go
 
 # dev

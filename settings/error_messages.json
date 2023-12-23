@@ -1,11 +1,11 @@
 {
   "emailRequired": "メールアドレスは必須入力です",
-  "emailLength": "メールアドレスは 5~254 文字です",
   "emailFormat": "メールアドレスの形式を確認してください",
+  "emailInUse": "そのメールアドレスは既に使われています",
   "passwordRequired": "パスワードは必須入力です",
   "passwordLength": "パスワードは 8~20 文字です",
   "passwordAlphabet": "パスワードには 半角英字 を少なくとも1つ含んで下さい",
   "passwordNumber": "パスワードには 半角数字 を少なくとも1つ含んで下さい",
-  "passwordSpecialChar": "パスワードには !?-_ を少なくとも1つ含んで下さい",
-  "emailInUse": "そのメールアドレスは既に使われています"
+  "passwordMixedCase": "パスワードには小文字と大文字の半角英字を混在させてください",
+  "passwordSpecialChar": "パスワードには !?-_ を少なくとも1つ含んで下さい"
 }

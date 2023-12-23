@@ -22,8 +22,8 @@ func UserCreate(c *gin.Context) {
 		Email:    c.PostForm("email"),
 		Password: c.PostForm("password"),
 	}
-
-	if _, errorMessages := models.CreateUser(&user); errorMessages != nil {
+	repo := models.Repository{}
+	if _, errorMessages := repo.CreateUser(&user); errorMessages != nil {
 		// エラーメッセージを取得
 		messages := []string{errorMessages.Error()}
 

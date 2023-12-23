@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -14,17 +15,23 @@ import (
 
 type ErrorMsg struct {
 	EmailRequired       string `json:"emailRequired"`
-	EmailLength         string `json:"emailLength"`
 	EmailFormat         string `json:"emailFormat"`
 	PasswordRequired    string `json:"passwordRequired"`
 	PasswordLength      string `json:"passwordLength"`
 	PasswordAlphabet    string `json:"passwordAlphabet"`
+	PasswordMixedCase   string `json:"passwordMixedCase"`
 	PasswordNumber      string `json:"passwordNumber"`
 	PasswordSpecialChar string `json:"passwordSpecialChar"`
 	EmailInUse          string `json:"emailInUse"`
 }
 
+type Repository struct {
+	*gorm.DB
+}
+
 var DB *gorm.DB
+var err error
+var repo *Repository
 
 const (
 	host          = "postgres"
@@ -36,31 +43,27 @@ const (
 )
 
 func Init() {
-	ConnectionDatabase()
-	CreateTables()
+	DB, err = openDatabaseConnection()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	repo = &Repository{DB: DB}
+	repo.CreateTables()
 }
 
-func ConnectionDatabase() {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s "+
-		"dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		host, user, password, dbname, port)
+func openDatabaseConnection() (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai", host, user, password, dbname, port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connected to database!")
+		return nil, err
 	}
-	DB = db
-	fmt.Println("connected to db is seceded!")
+	fmt.Println("Connected to DB successfully!")
+	return db, nil
 }
 
-func CreateTables() {
-	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE,
-    password TEXT,
-    created_at TIMESTAMP
-	)`, tableNameUser)
-
-	DB.Exec(cmdU)
+func (p *Repository) CreateTables() {
+	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id BIGSERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE, password TEXT, created_at TIMESTAMP)`, tableNameUser)
+	p.DB.Exec(cmdU)
 }
 
 func LoadConfig(filename string) (ErrorMsg, error) {

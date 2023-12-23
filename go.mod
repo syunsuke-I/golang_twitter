@@ -3,6 +3,7 @@ module github.com/syunsuke-I/golang_twitter
 go 1.21.1
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
