@@ -39,7 +39,7 @@ func TestCreateUserPassword(t *testing.T) {
 	mock.ExpectCommit()
 
 	// 実行
-	repo = &Repository{DB: gdb}
+	repo := NewRepository(gdb)
 	repo.CreateUser(&User{Email: email, Password: password})
 
 	// モックが期待通りの動作をしたか確認
@@ -87,7 +87,7 @@ func TestCreateUserFailsEmailLengthMaXEq(t *testing.T) {
 	mock.ExpectCommit()
 
 	// 実行
-	repo = &Repository{DB: gdb}
+	repo := NewRepository(gdb)
 	repo.CreateUser(&User{Email: email, Password: password})
 
 	// モックが期待通りの動作をしたか確認
@@ -328,7 +328,7 @@ func TestCreateUserFailsEmailUnique(t *testing.T) {
 	mock.ExpectRollback()
 
 	// ユーザーデータ1の作成（成功するはず）
-	repo = &Repository{DB: gdb}
+	repo := NewRepository(gdb)
 	repo.CreateUser(&User{Email: email_1, Password: password_1})
 
 	// ユーザーデータ1の作成（ユニーク制約違反エラーを期待）
@@ -405,7 +405,7 @@ func TestCreateUserFailsPasswordSpecialChar(t *testing.T) {
 		fmt.Println("Error loading config:", err)
 	}
 
-	repo = &Repository{DB: gdb}
+	repo := NewRepository(gdb)
 
 	// 実行
 	_, err = repo.CreateUser(&User{Email: email, Password: password})

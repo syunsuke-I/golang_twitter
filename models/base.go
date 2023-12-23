@@ -31,7 +31,6 @@ type Repository struct {
 
 var DB *gorm.DB
 var err error
-var repo *Repository
 
 const (
 	host          = "postgres"
@@ -43,15 +42,20 @@ const (
 )
 
 func Init() {
-	DB, err = openDatabaseConnection()
+	DB, err = OpenDatabaseConnection()
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	repo = &Repository{DB: DB}
+	repo := NewRepository(DB)
 	repo.CreateTables()
 }
 
-func openDatabaseConnection() (*gorm.DB, error) {
+// NewRepository は新しい Repository インスタンスを生成するコンストラクタ関数です。
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{DB: db}
+}
+
+func OpenDatabaseConnection() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai", host, user, password, dbname, port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

@@ -30,7 +30,7 @@ func (p *Repository) CreateUser(u *User) (*User, error) {
 		Email:    u.Email,
 		Password: Encrypt(u.Password),
 	}
-	result := repo.DB.Create(&entry)
+	result := p.DB.Create(&entry)
 	if result.Error != nil {
 		return nil, TranslateErrors(result)
 	}
