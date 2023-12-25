@@ -9,18 +9,6 @@ import (
 	"github.com/syunsuke-I/golang_twitter/models"
 )
 
-type ErrorMsg struct {
-	EmailRequired       string `json:"emailRequired"`
-	EmailFormat         string `json:"emailFormat"`
-	PasswordRequired    string `json:"passwordRequired"`
-	PasswordLength      string `json:"passwordLength"`
-	PasswordAlphabet    string `json:"passwordAlphabet"`
-	PasswordMixedCase   string `json:"passwordMixedCase"`
-	PasswordNumber      string `json:"passwordNumber"`
-	PasswordSpecialChar string `json:"passwordSpecialChar"`
-	EmailInUse          string `json:"emailInUse"`
-}
-
 var db *database.Database
 
 func Init(database *database.Database) {
