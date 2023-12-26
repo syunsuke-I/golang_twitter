@@ -1,4 +1,3 @@
-// auth_controller.go
 package controllers
 
 import (
@@ -40,5 +39,5 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusMovedPermanently, "signup")
+	c.Redirect(http.StatusMovedPermanently, "home")
 }

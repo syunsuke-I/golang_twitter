@@ -13,7 +13,10 @@
   {{ end }}  
   <div class="w-3/4 flex justify-center my-52 ml-48">
     <div class="bg-gray-800 p-8 rounded-lg">
-      <div class="text-white text-lg font-bold mb-4">アカウントを作成</div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-white">アカウントを作成</h2>
+        <a href="/" class="text-white">✖️</a>
+      </div>
       <form class="space-y-4" action="/signup" method="POST">
         <input type="text" class="w-full bg-gray-700 text-white border border-gray-600 p-2 rounded"
         id="email" name="email" type="email" placeholder="メールアドレス" value="{{.User.Email}}" required/>

@@ -26,6 +26,9 @@ func main() {
 	controllers.Init(db)
 
 	// ルーティング設定
+	r.GET("/", controllers.Top)
+	r.GET("/login", controllers.Login)
+	r.GET("/home", controllers.Home)
 	r.GET("/signup", controllers.SignUp)
 	r.POST("/signup", controllers.UserCreate)
 
