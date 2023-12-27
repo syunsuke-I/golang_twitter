@@ -30,8 +30,9 @@ func SignUp(c *gin.Context) {
 
 func UserCreate(c *gin.Context) {
 	repo := models.NewRepository(db.DB)
+	email := c.PostForm("email")
 	user := models.User{
-		Email:    c.PostForm("email"),
+		Email:    email,
 		Password: c.PostForm("password"),
 	}
 
@@ -43,11 +44,11 @@ func UserCreate(c *gin.Context) {
 		})
 		return
 	}
-
+	sendMail(email)
 	c.Redirect(http.StatusMovedPermanently, "home")
 }
 
-func sendMail() {
+func sendMail(email string) {
 	msg := mail.NewMsg()
 	host := os.Getenv("SMTP_HOST")
 	if host == "" {
@@ -61,7 +62,7 @@ func sendMail() {
 	if err := msg.From("hoge@example.test"); err != nil {
 		log.Fatal(err)
 	}
-	if err := msg.To("fuga@gmail.com"); err != nil {
+	if err := msg.To(email); err != nil {
 		log.Fatal(err)
 	}
 
