@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"log"
 	"mime"
 	"net/http"
@@ -49,6 +51,8 @@ func UserCreate(c *gin.Context) {
 }
 
 func sendMail(email string) {
+	token := generateTokenFromEmail(email)
+	body := createEmailBody(token)
 	msg := mail.NewMsg()
 	host := os.Getenv("SMTP_HOST")
 	if host == "" {
@@ -66,8 +70,8 @@ func sendMail(email string) {
 		log.Fatal(err)
 	}
 
-	msg.Subject(mime.BEncoding.Encode("UTF-8", "こんにちはこんにちは"))
-	msg.SetBodyString(mail.TypeTextPlain, "ようこそこんにちは")
+	msg.Subject(mime.BEncoding.Encode("UTF-8", "アクティベーションを完了してください。"))
+	msg.SetBodyString(mail.TypeTextPlain, body)
 
 	c, err := mail.NewClient(host, mail.WithPort(port))
 	c.SetTLSPolicy(mail.TLSOpportunistic)
@@ -75,6 +79,28 @@ func sendMail(email string) {
 		log.Fatal(err)
 	}
 	if err := c.DialAndSend(msg); err != nil {
-		log.Fatal("this ? = ", err)
+		log.Fatal(err)
 	}
+}
+
+func createEmailBody(token string) string {
+	bodyMsg := `
+	こんにちは、
+
+	ご登録ありがとうございます。アカウントのアクティベーションを完了するために、以下のリンクをクリックしてください。
+
+	http://localhost:8080/activate/` + token + `
+
+	このリンクは24時間有効です。この期間内にアクティベーションを完了してください。
+
+	もしこのメールに心当たりがない場合は、無視していただいて構いません。
+
+	よろしくお願いします。
+	`
+	return bodyMsg
+}
+
+func generateTokenFromEmail(email string) string {
+	hash := sha256.Sum256([]byte(email))
+	return hex.EncodeToString(hash[:])
 }
