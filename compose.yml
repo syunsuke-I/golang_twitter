@@ -14,9 +14,12 @@ services:
       - go-build:/go/pkg/mod
     environment:
       - GIN_MODE=release
+      - SMTP_HOST=mail
+      - SMTP_PORT=1025
     depends_on:
       postgres:
         condition: service_healthy
+
   postgres:
     container_name: postgres
     image: postgres:14.3
@@ -39,3 +42,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
