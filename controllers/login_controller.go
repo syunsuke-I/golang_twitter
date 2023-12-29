@@ -19,7 +19,7 @@ func ShowLoginPage(c *gin.Context) {
 func ProcessLogin(c *gin.Context) {
 	repo := models.NewRepository(db.DB)
 	email := c.PostForm("email")
-	password := c.PostForm("passsword")
+	password := c.PostForm("password")
 
 	errMsg, err := models.LoadConfig("settings/error_messages.json")
 	if err != nil {
