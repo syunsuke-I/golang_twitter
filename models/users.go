@@ -14,10 +14,12 @@ import (
 )
 
 type User struct {
-	ID        uint64 `gorm:"primarykey"`
-	Email     string `json:"email" gorm:"unique;size:255"`
-	Password  string `json:"password" gorm:"type:text"`
-	CreatedAt time.Time
+	ID              uint64 `gorm:"primarykey"`
+	Email           string `json:"email" gorm:"unique;size:255"`
+	Password        string `json:"password" gorm:"type:text"`
+	ActivationToken string `gorm:"size:64"`
+	IsActive        bool   `gorm:"default:false"`
+	CreatedAt       time.Time
 }
 
 func (p *Repository) CreateUser(u *User) (*User, error) {
@@ -27,15 +29,49 @@ func (p *Repository) CreateUser(u *User) (*User, error) {
 	}
 
 	entry := User{
-		Email:    u.Email,
-		Password: Encrypt(u.Password),
+		Email:           u.Email,
+		Password:        Encrypt(u.Password),
+		ActivationToken: u.ActivationToken,
 	}
+
 	result := p.DB.Create(&entry)
 	if result.Error != nil {
 		return nil, TranslateErrors(result)
 	}
 
 	return &entry, nil
+}
+
+func (p *Repository) FindUserByActivationToken(token string) (*User, error) {
+	var user User
+	result := p.DB.Where("activation_token = ?", token).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil // トークンに該当するユーザーが見つからない場合
+		}
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func (p *Repository) FindUserByEmail(email string) (*User, error) {
+	var user User
+	result := p.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil // メールアドレスに該当するユーザーが見つからない場合
+		}
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func (p *Repository) ActivateUser(u *User) error {
+	if u == nil {
+		return errors.New("provided user is nil")
+	}
+	u.IsActive = true // ユーザーをアクティブに設定
+	return p.DB.Save(u).Error
 }
 
 func (u User) Validate() error {

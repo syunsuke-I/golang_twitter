@@ -1,4 +1,4 @@
-{{ define "sign_up/index.html"}}
+{{ define "sign_up/sign_up.html"}}
 {{ template "common/header.html" .}}
 <body class="bg-black">
   {{ if .errorMessages }}
@@ -21,7 +21,7 @@
         <input type="text" class="w-full bg-gray-700 text-white border border-gray-600 p-2 rounded"
         id="email" name="email" type="email" placeholder="メールアドレス" value="{{.User.Email}}" required/>
         <input type="password" class="w-full appearance-none leading-tight bg-gray-700 text-white border border-gray-600 p-2 rounded"
-        id="password" name="password" type="password" placeholder="******************" value="{{.User.Password}}" required
+        id="password" name="password"  placeholder="******************" value="{{.User.Password}}" required
         />
         <button type="submit" class="w-full bg-gray-600 text-white p-2 rounded">登録</button>
       </form>

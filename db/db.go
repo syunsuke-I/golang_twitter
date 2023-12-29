@@ -34,7 +34,14 @@ func NewDatabase() *Database {
 }
 
 func (d *Database) CreateTables() error {
-	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id BIGSERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE, password TEXT, created_at TIMESTAMP)`, tableNameUser)
+	cmdU := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE,
+    password TEXT,
+    activation_token VARCHAR(64),
+    is_active BOOLEAN DEFAULT false,
+    created_at TIMESTAMP
+	)`, tableNameUser)
 
 	result := d.DB.Exec(cmdU)
 	if result.Error != nil {

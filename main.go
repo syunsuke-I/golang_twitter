@@ -27,7 +27,9 @@ func main() {
 
 	// ルーティング設定
 	r.GET("/", controllers.Top)
-	r.GET("/login", controllers.Login)
+	r.GET("/login", controllers.ShowLoginPage)
+	r.POST("/login", controllers.ProcessLogin)
+	r.GET("/activate", controllers.Activate)
 	r.GET("/home", controllers.Home)
 	r.GET("/signup", controllers.SignUp)
 	r.POST("/signup", controllers.UserCreate)

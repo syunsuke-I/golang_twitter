@@ -1,9 +1,9 @@
 package models
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"golang.org/x/crypto/bcrypt"
@@ -20,6 +20,9 @@ type ErrorMsg struct {
 	PasswordSpecialChar string `json:"passwordSpecialChar"`
 	EmailInUse          string `json:"emailInUse"`
 	PasswordMixedCase   string `json:"passwordMixedCase"`
+	LoginError          string `json:"loginError"`
+	InactiveAccount     string `json:"inactiveAccount"`
+	ServerError         string `json:"serverError"`
 }
 
 func LoadConfig(filename string) (ErrorMsg, error) {
@@ -41,12 +44,18 @@ func LoadConfig(filename string) (ErrorMsg, error) {
 }
 
 // 暗号(Hash)化
-func Encrypt(plaintext string) (cryptext string) {
-	cryptext = fmt.Sprintf("%x", sha1.Sum([]byte(plaintext)))
-	return cryptext
+func Encrypt(password string) (cryptext string) {
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hashed)
 }
 
 // 暗号(Hash)と入力された平パスワードの比較
-func CompareHashAndPassword(hash, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+func CompareHashAndPassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+// メールアドレスからtokenを作成
+func GenerateTokenFromEmail(email string) string {
+	hash := sha256.Sum256([]byte(email))
+	return hex.EncodeToString(hash[:])
 }

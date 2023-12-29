@@ -29,18 +29,20 @@ func TestCreateUserPassword(t *testing.T) {
 	// ユーザーデータ
 	email := "test@gmail.com"
 	password := "Abc123!?"
-	hashedPassword := Encrypt(password) // パスワードをハッシュ化
+	activationToken := GenerateTokenFromEmail(email)
 
 	// Mock設定
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users" ("email","password","created_at") VALUES ($1,$2,$3) RETURNING "id"`)).
-		WithArgs(email, hashedPassword, sqlmock.AnyArg()).
+	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users" ("email","password","activation_token","is_active","created_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id"`)).
+		WithArgs(email, sqlmock.AnyArg(), activationToken, false, sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
 	// 実行
 	repo := NewRepository(gdb)
-	repo.CreateUser(&User{Email: email, Password: password})
+	user, err := repo.CreateUser(&User{Email: email, Password: password, ActivationToken: activationToken})
+	fmt.Println("user = ", user)
+	fmt.Println("err = ", err)
 
 	// モックが期待通りの動作をしたか確認
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -77,18 +79,19 @@ func TestCreateUserFailsEmailLengthMaXEq(t *testing.T) {
 
 	// ユーザーデータ
 	password := "Abc123!?"
-	hashedPassword := Encrypt(password) // パスワードをハッシュ化
+	activationToken := GenerateTokenFromEmail(email)
 
 	// Mock設定
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users" ("email","password","created_at") VALUES ($1,$2,$3) RETURNING "id"`)).
-		WithArgs(email, hashedPassword, sqlmock.AnyArg()).
+	mock.ExpectQuery(regexp.QuoteMeta(
+		`INSERT INTO "users" ("email","password","activation_token","is_active","created_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id"`)).
+		WithArgs(email, sqlmock.AnyArg(), activationToken, false, sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
 	// 実行
 	repo := NewRepository(gdb)
-	repo.CreateUser(&User{Email: email, Password: password})
+	repo.CreateUser(&User{Email: email, Password: password, ActivationToken: activationToken})
 
 	// モックが期待通りの動作をしたか確認
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -304,17 +307,19 @@ func TestCreateUserFailsEmailUnique(t *testing.T) {
 	// ユーザーデータ1
 	email_1 := "testuser1@gmail.com"
 	password_1 := "Abc123!?"
-	hashedPassword_1 := Encrypt(password_1) // パスワードをハッシュ化
+	activationToken_1 := GenerateTokenFromEmail(email_1)
 
 	// ユーザーデータ2
 	email_2 := "testuser1@gmail.com" // 既に存在するメールアドレス
 	password_2 := "Abc1234!?"
-	hashedPassword_2 := Encrypt(password_2) // パスワードをハッシュ化
+	activationToken_2 := GenerateTokenFromEmail(email_2)
 
 	// ユーザーデータ1の作成（成功するはず）
+	// Mock設定
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users" ("email","password","created_at") VALUES ($1,$2,$3) RETURNING "id"`)).
-		WithArgs(email_1, hashedPassword_1, sqlmock.AnyArg()).
+	mock.ExpectQuery(regexp.QuoteMeta(
+		`INSERT INTO "users" ("email","password","activation_token","is_active","created_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id"`)).
+		WithArgs(email_1, sqlmock.AnyArg(), activationToken_1, false, sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
@@ -322,17 +327,18 @@ func TestCreateUserFailsEmailUnique(t *testing.T) {
 
 	// ユーザーデータ2の作成（ユニーク制約違反エラーを期待）
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users" ("email","password","created_at") VALUES ($1,$2,$3) RETURNING "id"`)).
-		WithArgs(email_2, hashedPassword_2, sqlmock.AnyArg()).
+	mock.ExpectQuery(regexp.QuoteMeta(
+		`INSERT INTO "users" ("email","password","activation_token","is_active","created_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id"`)).
+		WithArgs(email_2, sqlmock.AnyArg(), activationToken_2, false, sqlmock.AnyArg()).
 		WillReturnError(fmt.Errorf(expectedErrMsg))
 	mock.ExpectRollback()
 
 	// ユーザーデータ1の作成（成功するはず）
 	repo := NewRepository(gdb)
-	repo.CreateUser(&User{Email: email_1, Password: password_1})
+	repo.CreateUser(&User{Email: email_1, Password: password_1, ActivationToken: activationToken_1})
 
 	// ユーザーデータ1の作成（ユニーク制約違反エラーを期待）
-	_, err = repo.CreateUser(&User{Email: email_2, Password: password_2})
+	_, err = repo.CreateUser(&User{Email: email_2, Password: password_2, ActivationToken: activationToken_2})
 	if err == nil {
 		t.Errorf("expected an error but got none")
 	} else if err.Error() != expectedErrMsg {
