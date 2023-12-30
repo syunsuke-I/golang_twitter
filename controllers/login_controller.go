@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
 	"github.com/syunsuke-I/golang_twitter/models"
+	"github.com/syunsuke-I/golang_twitter/utils"
 )
 
 func ShowLoginPage(c *gin.Context) {
@@ -16,7 +18,7 @@ func ShowLoginPage(c *gin.Context) {
 	)
 }
 
-func ProcessLogin(c *gin.Context) {
+func ProcessLogin(c *gin.Context, redisClient redis.Conn) {
 	repo := models.NewRepository(db.DB)
 	email := c.PostForm("email")
 	password := c.PostForm("password")
@@ -41,6 +43,13 @@ func ProcessLogin(c *gin.Context) {
 		})
 		return
 	}
+
+	if err := utils.SetSessionWithUserID(u.ID, redisClient); err != nil {
+		// エラー処理
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"Error": "Internal server error"})
+		return
+	}
+
 	err = models.CompareHashAndPassword(u.Password, password)
 	fmt.Println("err = ", err)
 	if err != nil {

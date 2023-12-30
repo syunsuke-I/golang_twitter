@@ -1,7 +1,7 @@
-// main.go
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +20,8 @@ func main() {
 	db := database.NewDatabase()
 	defer db.Close()
 
-	c := utils.RedisConnection()
-	defer c.Close()
+	redisClient := utils.RedisConnection()
+	defer redisClient.Close()
 
 	if err := db.CreateTables(); err != nil {
 		log.Fatalf("Failed to create tables: %v", err)
@@ -32,11 +32,25 @@ func main() {
 	// ルーティング設定
 	r.GET("/", controllers.Top)
 	r.GET("/login", controllers.ShowLoginPage)
-	r.POST("/login", controllers.ProcessLogin)
+	r.POST("/login", func(c *gin.Context) {
+		controllers.ProcessLogin(c, redisClient)
+	})
 	r.GET("/activate", controllers.Activate)
-	r.GET("/home", controllers.Home)
 	r.GET("/signup", controllers.SignUp)
 	r.POST("/signup", controllers.UserCreate)
 
+	// ログイン後にアクセスされるルートにセッション確認ミドルウェアを適用
+	authRequired := r.Group("/")
+	authRequired.Use(SessionAuthMiddleware())
+	{
+		authRequired.GET("/home", controllers.Home)
+	}
+
 	r.Run(":8080")
+}
+
+func SessionAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println("hoge")
+	}
 }

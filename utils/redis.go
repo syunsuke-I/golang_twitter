@@ -2,9 +2,16 @@ package utils
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gomodule/redigo/redis"
+	"github.com/google/uuid"
 )
+
+type Data struct {
+	Key   string
+	Value string
+}
 
 // Connection
 func RedisConnection() redis.Conn {
@@ -17,23 +24,28 @@ func RedisConnection() redis.Conn {
 	return c
 }
 
-type Data struct {
-	Key   string
-	Value string
-}
+func SetSessionWithUserID(userID uint64, c redis.Conn) error {
+	// セッションIDとしてUUIDを生成
+	sessionID := uuid.New().String()
+	userIDStr := strconv.FormatUint(userID, 10)
 
-// 複数のデータの登録(Redis: MSET key [key...])
-func Mset(data []Data, c redis.Conn) {
+	// ユーザーIDとセッションIDのペアを保存
+	data := []Data{
+		{Key: "session:" + sessionID, Value: userIDStr},
+	}
+
+	// Redisにセッション情報を保存
 	var query []interface{}
 	for _, v := range data {
 		query = append(query, v.Key, v.Value)
 	}
-	fmt.Println(query) // [key1 value1 key2 value2]
-
-	c.Do("MSET", query...)
+	_, err := c.Do("MSET", query...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// 複数の値を取得 (Redis: MGET key [key...])
 func Mget(keys []string, c redis.Conn) []string {
 	var query []interface{}
 	for _, v := range keys {
