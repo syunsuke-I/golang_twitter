@@ -19,7 +19,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
   postgres:
     container_name: postgres
     image: postgres:14.3
@@ -47,3 +46,9 @@ services:
     ports:
       - "8025:8025"
       - "1025:1025"
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./data/redis:/data"

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/syunsuke-I/golang_twitter/controllers"
 	database "github.com/syunsuke-I/golang_twitter/db"
+	"github.com/syunsuke-I/golang_twitter/utils"
 )
 
 func main() {
@@ -18,6 +19,9 @@ func main() {
 	// データベース接続の初期化
 	db := database.NewDatabase()
 	defer db.Close()
+
+	c := utils.RedisConnection()
+	defer c.Close()
 
 	if err := db.CreateTables(); err != nil {
 		log.Fatalf("Failed to create tables: %v", err)
