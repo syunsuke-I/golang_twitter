@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -41,16 +40,12 @@ func main() {
 
 	// ログイン後にアクセスされるルートにセッション確認ミドルウェアを適用
 	authRequired := r.Group("/")
-	authRequired.Use(SessionAuthMiddleware())
+	authRequired.Use(utils.SessionAuthMiddleware())
 	{
-		authRequired.GET("/home", controllers.Home)
+		authRequired.GET("/home", func(c *gin.Context) {
+			controllers.Home(c, redisClient)
+		})
 	}
 
 	r.Run(":8080")
-}
-
-func SessionAuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("hoge")
-	}
 }

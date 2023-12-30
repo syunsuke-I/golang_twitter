@@ -23,6 +23,8 @@ type ErrorMsg struct {
 	LoginError          string `json:"loginError"`
 	InactiveAccount     string `json:"inactiveAccount"`
 	ServerError         string `json:"serverError"`
+	LoginRequired       string `json:"loginRequired"`
+	SessionInvalid      string `json:"sessionInvalid"`
 }
 
 func LoadConfig(filename string) (ErrorMsg, error) {

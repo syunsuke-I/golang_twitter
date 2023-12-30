@@ -51,7 +51,6 @@ func ProcessLogin(c *gin.Context, redisClient redis.Conn) {
 	}
 
 	err = models.CompareHashAndPassword(u.Password, password)
-	fmt.Println("err = ", err)
 	if err != nil {
 		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
 			"errorMessages": []string{errMsg.LoginError},
@@ -67,6 +66,8 @@ func ProcessLogin(c *gin.Context, redisClient redis.Conn) {
 		})
 		return
 	}
+
+	c.SetCookie("email", email, 3600, "/", "localhost", true, true)
 
 	// ログイン成功
 	c.Redirect(http.StatusMovedPermanently, "home")
