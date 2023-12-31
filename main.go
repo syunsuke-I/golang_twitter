@@ -40,7 +40,7 @@ func main() {
 
 	// ログイン後にアクセスされるルートにセッション確認ミドルウェアを適用
 	authRequired := r.Group("/")
-	authRequired.Use(utils.SessionAuthMiddleware())
+	authRequired.Use(utils.SessionAuthMiddleware(redisClient))
 	{
 		authRequired.GET("/home", func(c *gin.Context) {
 			controllers.Home(c, redisClient)

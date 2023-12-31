@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gomodule/redigo/redis"
@@ -67,7 +68,7 @@ func ProcessLogin(c *gin.Context, redisClient redis.Conn) {
 		return
 	}
 
-	c.SetCookie("email", email, 3600, "/", "localhost", true, true)
+	c.SetCookie("uid", strconv.FormatUint(u.ID, 10), 3600, "/", "localhost", true, true)
 
 	// ログイン成功
 	c.Redirect(http.StatusMovedPermanently, "home")
