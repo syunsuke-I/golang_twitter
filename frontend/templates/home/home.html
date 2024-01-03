@@ -7,14 +7,18 @@
   .follow{
     color:rgb(77, 87, 98);
   }
-
   .right_content{
     background-color:rgb(30, 39, 50);
-  }  
+  }
+  .grid-container {
+  display: grid;
+  grid-template-columns: 1.2fr 2.3fr 1.5fr;
+}
+
 </style>
 <body>
   {{ template "common/error_fields.html" .}}
-  <div class="flex grid grid-cols-3 customGray text-white">
+  <div class="grid grid-container customGray text-white">
     {{ template "home/sidebar_left.html" .}}
     {{ template "home/content_main.html" .}}
     {{ template "home/sidebar_right.html" .}}
