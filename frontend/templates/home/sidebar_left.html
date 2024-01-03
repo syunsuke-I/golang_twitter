@@ -1,0 +1,38 @@
+{{ define "home/sidebar_left.html"}}
+  <div class="bg-customGray h-screen w-64 flex flex-col">
+    <!-- ロゴやタイトルエリア -->
+    <div class="text-white text-xl font-bold p-4">
+      <img media="screen" src="../../frontend/static/img/logo-white.png" class="w-12 h-12 rounded-full"/>
+    </div>
+
+    <!-- メニューアイテムエリア -->
+    <div class="flex-grow flex flex-col text-gray-300 mt-4">
+      <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-700 hover:text-white text-lg my-1">
+        <i class="bi bi-house-door mr-2" style="font-size:1.5rem;"></i>
+        ホーム
+      </a>
+      <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-700 hover:text-white text-lg my-1">
+        <i class="bi bi-search mr-2" style="font-size:1.5rem;"></i>
+        検索
+      </a>
+      <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-700 hover:text-white text-lg my-1">
+        <i class="bi bi-bell mr-2" style="font-size:1.5rem;"></i>
+        通知
+      </a>
+    </div>
+
+    <!-- プロフィールエリア -->
+    <div class="mt-auto text-gray-300 p-4 hover:bg-gray-700 hover:text-white">
+      <div class="bg-gray-800 p-4 rounded-full flex items-center space-x-3">
+        <i class="bi bi-person-circle" style="font-size:50px;"></i>
+        <div class="flex flex-col">
+          <span class="text-white font-bold">@UserName</span>
+          <span class="text-gray-400">@UserId</span>
+        </div>
+        <div class="ml-auto">
+          <button class="text-gray-400 hover:text-white">•••</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}

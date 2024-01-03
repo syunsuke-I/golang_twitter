@@ -1,9 +1,19 @@
 {{ define "home/home.html"}}
 {{ template "common/header.html" .}}
-<body class="bg-black">
+<style>
+  .customGray{
+    background-color:rgb(32, 44, 55);
+  } 
+</style>
+<body>
   {{ template "common/error_fields.html" .}}
-  <h1 class="text-white">"{{.Email}}" </h1>
+  <div class="flex grid grid-cols-3 customGray text-white">
+    {{ template "home/sidebar_left.html" .}}
+    <div class="border-x border-x-0.5 border-gray-100">mainMenu</div>
+    <div class="h-screen">rightMenu</div>
+  </div>
 </body>
+
 
 </html>
 {{ end }}
