@@ -3,17 +3,21 @@
 <style>
   .customGray{
     background-color:rgb(32, 44, 55);
-  } 
+  }
+  .follow{
+    color:rgb(77, 87, 98);
+  }
 </style>
 <body>
   {{ template "common/error_fields.html" .}}
   <div class="flex grid grid-cols-3 customGray text-white">
     {{ template "home/sidebar_left.html" .}}
-    <div class="border-x border-x-0.5 border-gray-100">mainMenu</div>
-    <div class="h-screen">rightMenu</div>
+    {{ template "home/content_main.html" .}}
+    <div class="h-screen">
+      
+    </div>
   </div>
 </body>
-
 
 </html>
 {{ end }}
