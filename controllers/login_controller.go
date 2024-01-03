@@ -11,7 +11,7 @@ import (
 	"github.com/syunsuke-I/golang_twitter/utils"
 )
 
-func ShowLoginPage(c *gin.Context) {
+func LoginPage(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
 		"login/login.html",
@@ -19,7 +19,7 @@ func ShowLoginPage(c *gin.Context) {
 	)
 }
 
-func ProcessLogin(c *gin.Context, redisClient redis.Conn) {
+func Login(c *gin.Context, redisClient redis.Conn) {
 	repo := models.NewRepository(db.DB)
 	email := c.PostForm("email")
 	password := c.PostForm("password")
