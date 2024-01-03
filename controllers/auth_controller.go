@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,20 +26,33 @@ func SignUp(c *gin.Context) {
 }
 
 func Activate(c *gin.Context) {
+	errMsg, err := models.LoadConfig("settings/error_messages.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+	}
 	repo := models.NewRepository(db.DB)
 	token := c.Query("token")
 	u, err := repo.FindUserByActivationToken(token)
 	if err != nil {
-		log.Fatal(err)
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+			"errorMessages": []string{errMsg.InvalidActivationToken},
+		})
+		return
 	}
 
 	if u == nil {
-		log.Fatal("User not found")
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+			"errorMessages": []string{errMsg.InvalidActivationToken},
+		})
+		return
 	}
 
 	err = repo.ActivateUser(u)
 	if err != nil {
-		log.Fatal(err)
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+			"errorMessages": []string{errMsg.InvalidActivationToken},
+		})
+		return
 	}
 
 	c.Redirect(http.StatusMovedPermanently, "home")

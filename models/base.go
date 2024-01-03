@@ -10,21 +10,22 @@ import (
 )
 
 type ErrorMsg struct {
-	EmailRequired       string `json:"emailRequired"`
-	EmailLength         string `json:"emailLength"`
-	EmailFormat         string `json:"emailFormat"`
-	PasswordRequired    string `json:"passwordRequired"`
-	PasswordLength      string `json:"passwordLength"`
-	PasswordAlphabet    string `json:"passwordAlphabet"`
-	PasswordNumber      string `json:"passwordNumber"`
-	PasswordSpecialChar string `json:"passwordSpecialChar"`
-	EmailInUse          string `json:"emailInUse"`
-	PasswordMixedCase   string `json:"passwordMixedCase"`
-	LoginError          string `json:"loginError"`
-	InactiveAccount     string `json:"inactiveAccount"`
-	ServerError         string `json:"serverError"`
-	LoginRequired       string `json:"loginRequired"`
-	SessionInvalid      string `json:"sessionInvalid"`
+	EmailRequired          string `json:"emailRequired"`
+	EmailLength            string `json:"emailLength"`
+	EmailFormat            string `json:"emailFormat"`
+	PasswordRequired       string `json:"passwordRequired"`
+	PasswordLength         string `json:"passwordLength"`
+	PasswordAlphabet       string `json:"passwordAlphabet"`
+	PasswordNumber         string `json:"passwordNumber"`
+	PasswordSpecialChar    string `json:"passwordSpecialChar"`
+	EmailInUse             string `json:"emailInUse"`
+	PasswordMixedCase      string `json:"passwordMixedCase"`
+	LoginError             string `json:"loginError"`
+	InactiveAccount        string `json:"inactiveAccount"`
+	ServerError            string `json:"serverError"`
+	LoginRequired          string `json:"loginRequired"`
+	SessionInvalid         string `json:"sessionInvalid"`
+	InvalidActivationToken string `json:"invalidActivationToken"`
 }
 
 func LoadConfig(filename string) (ErrorMsg, error) {

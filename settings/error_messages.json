@@ -12,5 +12,6 @@
   "inactiveAccount": "アカウントがアクティブではありません。メールを確認してください。",
   "serverError": "サーバーエラーが発生しました。",
   "loginRequired": "ログインしてください",
-  "sessionInvalid": "セッションが有効ではありません"
+  "sessionInvalid": "セッションが有効ではありません",
+  "invalidActivationToken": "不正なアクティベーショントークンです"
 }

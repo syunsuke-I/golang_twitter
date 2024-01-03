@@ -31,7 +31,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 
 	u, err := repo.FindUserByEmail(email)
 	if err != nil {
-		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
 			"errorMessages": []string{errMsg.ServerError},
 			"User":          u,
 		})
@@ -39,7 +39,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 	}
 
 	if u == nil {
-		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
 			"errorMessages": []string{errMsg.LoginError},
 		})
 		return
@@ -53,7 +53,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 
 	err = models.CompareHashAndPassword(u.Password, password)
 	if err != nil {
-		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
 			"errorMessages": []string{errMsg.LoginError},
 			"User":          u,
 		})
@@ -61,7 +61,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 	}
 
 	if !u.IsActive {
-		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
+		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
 			"errorMessages": []string{errMsg.InactiveAccount},
 			"User":          u,
 		})
