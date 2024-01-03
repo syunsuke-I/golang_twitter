@@ -7,15 +7,17 @@
   .follow{
     color:rgb(77, 87, 98);
   }
+
+  .right_content{
+    background-color:rgb(30, 39, 50);
+  }  
 </style>
 <body>
   {{ template "common/error_fields.html" .}}
   <div class="flex grid grid-cols-3 customGray text-white">
     {{ template "home/sidebar_left.html" .}}
     {{ template "home/content_main.html" .}}
-    <div class="h-screen">
-      
-    </div>
+    {{ template "home/sidebar_right.html" .}}
   </div>
 </body>
 
