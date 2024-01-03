@@ -32,7 +32,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 	u, err := repo.FindUserByEmail(email)
 	if err != nil {
 		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
-			"errorMessages": []string{errMsg.ServerError},
+			"errorMessages": []string{errMsg.LoginError},
 			"User":          u,
 		})
 		return
