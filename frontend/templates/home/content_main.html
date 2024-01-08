@@ -12,10 +12,17 @@
       </div>
     </div>
     <!-- ツイート入力部分 -->
-    <div class="flex w-full max-w-2xl border-b border-gray-700 p-4 space-x-3 items-center">
-      <i class="bi bi-person-circle text-5xl"></i>
-      <textarea placeholder="いまどうしてる？" class="bg-transparent flex-1 outline-none placeholder-gray-500 text-base resize-none" rows="1"></textarea>
-      <button class="bg-blue-500 text-white rounded-full px-4 py-2 text-base">ツイートする</button>
+    {{ template "common/error_fields.html" .}}
+    <div class="flex w-full max-w-2xl border-b border-gray-700 p-4 flex-col items-start">
+      <form action="/tweet" method="POST" class="w-full">
+        <div class="flex space-x-3 mb-4 items-center">
+          <i class="bi bi-person-circle text-5xl"></i>
+          <textarea placeholder="いまどうしてる？" class="bg-transparent flex-1 outline-none placeholder-gray-500 text-base resize-none" id="content" name="content" rows="1"></textarea>
+        </div>
+        <div class="flex justify-end">
+          <button class="bg-blue-500 text-white rounded-full px-4 py-2 text-base submit-button" id="submit-button">ツイートする</button>
+        </div>
+      </form>
     </div>
     <!-- ツイート表示部分(mock) -->
     <div class="flex flex-col w-full max-w-2xl">

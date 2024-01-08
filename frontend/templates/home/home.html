@@ -14,32 +14,20 @@
   display: grid;
   grid-template-columns: 1.2fr 2.3fr 1.5fr;
 }
-
+.submit-button:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+    color: #EFF3F4;
+  }
 </style>
+<script src="frontend/static/js/home.js"></script>
 <body>
-  {{ template "common/error_fields.html" .}}
   <div class="grid grid-container customGray text-white">
     {{ template "home/sidebar_left.html" .}}
     {{ template "home/content_main.html" .}}
     {{ template "home/sidebar_right.html" .}}
   </div>
 </body>
-
-<script>
-  // form-sizing: content の代替
-  document.addEventListener('DOMContentLoaded', (event) => {
-  const tx = document.getElementsByTagName('textarea');
-  for (let i = 0; i < tx.length; i++) {
-    tx[i].setAttribute('style', 'height:' + (tx[i].scrollHeight) + 'px;overflow-y:hidden;');
-    tx[i].addEventListener("input", OnInput, false);
-  }
-
-  function OnInput() {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight) + 'px';
-  }
-});
-</script>
 
 </html>
 {{ end }}
