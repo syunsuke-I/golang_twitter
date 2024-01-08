@@ -1,0 +1,22 @@
+{{ define "top/top.html"}}
+{{ template "common/header.html" .}}
+  <body class="bg-black text-white">
+      <div class="flex items-center justify-center min-h-screen">
+          <div class="mb-8">
+            <img media="screen"  src="../../frontend/static/img/logo-white.png" width="500px"/>    
+          </div>
+          <div>
+            <h1 class="text-4xl font-bold mb-6">すべての話題が、ここに。</h1>
+            <p class="mb-6">今すぐ参加しましょう。</p>
+            <div class="w-64">
+              <div class="space-y-4">
+                <a href="/signup" class="block bg-blue-500 w-full text-center px-6 py-2 rounded-full shadow-md hover:bg-white hover:text-blue-500 focus:outline-none">アカウントを作成</a>
+              </div>
+              <div class="mt-9">
+                <a href="/login" class="block text-blue-500 w-full text-center border border-blue-500 px-6 py-2 rounded-full shadow-md hover:bg-blue-500 hover:text-white focus:outline-none">ログイン</a>
+              </div>
+            </div>
+      </div>
+  </body>
+</html>
+{{ end }}

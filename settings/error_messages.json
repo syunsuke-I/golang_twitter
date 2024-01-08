@@ -7,5 +7,11 @@
   "passwordAlphabet": "パスワードには 半角英字 を少なくとも1つ含んで下さい",
   "passwordNumber": "パスワードには 半角数字 を少なくとも1つ含んで下さい",
   "passwordMixedCase": "パスワードには小文字と大文字の半角英字を混在させてください",
-  "passwordSpecialChar": "パスワードには !?-_ を少なくとも1つ含んで下さい"
+  "passwordSpecialChar": "パスワードには !?-_ を少なくとも1つ含んで下さい",
+  "loginError": "メールアドレスかパスワードに誤りがあります",
+  "inactiveAccount": "アカウントがアクティブではありません。メールを確認してください。",
+  "serverError": "サーバーエラーが発生しました。",
+  "loginRequired": "ログインしてください",
+  "sessionInvalid": "セッションが有効ではありません",
+  "invalidActivationToken": "不正なアクティベーショントークンです"
 }

@@ -1,0 +1,9 @@
+{{ define "home/home.html"}}
+{{ template "common/header.html" .}}
+<body class="bg-black">
+  {{ template "common/error_fields.html" .}}
+  <h1 class="text-white">"{{.Email}}" </h1>
+</body>
+
+</html>
+{{ end }}
