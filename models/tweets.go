@@ -35,6 +35,12 @@ func (p *Repository) CreateTweet(t *Tweet) (*Tweet, error) {
 	return &entry, nil
 }
 
+func (p *Repository) TweetsFind(id uint64) *[]Tweet {
+	var tweets []Tweet
+	p.DB.Where("user_id = ?", id).Find(&tweets)
+	return &tweets
+}
+
 func (t Tweet) Validate() error {
 	errMsg, err := LoadConfig("settings/error_messages.json")
 	if err != nil {

@@ -37,8 +37,7 @@ func TweetCreate(c *gin.Context) {
 		Content: content,
 	}
 
-	// ここでツイートをデータベースに保存
-	createdTweet, errorMessages := repo.CreateTweet(&tweet)
+	_, errorMessages := repo.CreateTweet(&tweet)
 
 	// エラーがある場合はエラーメッセージを返す
 	if errorMessages != nil {
@@ -49,9 +48,5 @@ func TweetCreate(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"userID":  createdTweet.UserID,
-		"content": createdTweet.Content,
-	})
-	// c.Redirect(http.StatusMovedPermanently, "home") // 本来ならば同じ画面に遷移
+	c.Redirect(http.StatusMovedPermanently, "home")
 }
