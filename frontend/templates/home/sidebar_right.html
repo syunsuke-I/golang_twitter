@@ -1,0 +1,85 @@
+{{ define "home/sidebar_right.html"}}
+
+<div class="h-screen">
+  <div class="ml-12">
+    <!-- 検索欄 -->
+    <div class="flex items-center rounded-full bg-gray-700 p-2 w-full max-w-sm mt-4">
+      <i class="bi bi-search mr-2 text-xl"></i> <!-- styleをTailwind CSSのクラスに変更 -->
+      <input class="bg-transparent outline-none placeholder-gray-400 text-white pl-4 pr-3 py-1 w-full" type="search" placeholder="検索" />
+    </div>
+    <!-- サブスクへの案内 -->
+    <div class="text-white rounded-lg p-4 max-w-sm mt-5 right_content"> 
+      <p class="text-2xl font-bold">
+        プレミアムにサブスクライブ
+      </p>
+      <p class="text-sm mt-2">
+        サブスクライブして新機能を利用しましょう。
+        購読を続けている場合、広告収益配分を受け取れます。
+      </p>
+      <button class="bg-blue-500  rounded-full hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full  mt-4">
+        購入する
+      </button>
+    </div>
+    <!-- いまどうしてる？--> 
+    <div class="rounded-lg p-4 mt-2 my-2 max-w-sm right_content">
+      <p class="text-2xl font-bold">
+        いまどうしてる？
+      </p>
+      <div class="divide-y divide-gray-700">
+        <!-- アイテム-->
+        <div class="py-3 hover:bg-gray-700">
+          <div class="text-sm font-semibold text-blue-500">Go・トレンド</div>
+          <div class="text-xs text-gray-400">Goについて</div>
+          <div class="text-sm text-white mt-1">トレンドビッグ：New versions of Golang are released.</div>
+        </div>
+      </div>
+      <div class="divide-y divide-gray-700">
+        <!-- アイテム-->
+        <div class="py-3 hover:bg-gray-700">
+          <div class="text-sm font-semibold text-blue-500">Rails・トレンド</div>
+          <div class="text-xs text-gray-400">Railsについて</div>
+          <div class="text-sm text-white mt-1">トレンドビッグ：New versions of Rails are released.</div>
+        </div>
+      </div>          
+      <!-- さらに表示ボタン -->
+      <button class="w-full text-blue-500 text-sm font-semibold mt-4 py-2 hover:bg-gray-700 rounded">
+        さらに表示
+      </button>
+    </div>
+    <!-- おすすめユーザ--> 
+    <div class="rounded-lg p-4 mt-2 max-w-sm right_content">
+      <p class="text-2xl font-bold">
+        おすすめユーザ
+      </p>
+      <div class="divide-y divide-gray-700">
+        <!-- アイテム-->
+        <div class="flex flex-col w-full max-w-2xl">
+          <div class="flex p-4 border-b border-gray-700">
+            <i class="bi bi-person-circle" style="font-size:30px;"></i>
+            <div class="ml-4 flex flex-col">
+              <span class="font-bold text-white">test_user3</span>
+              <span class="text-gray-500">@test_user3</span>
+            </div> 
+            <button class="bg-white text-black rounded-full font-bold px-6 text-sm ml-auto">フォロー</button>
+          </div>
+        </div>
+        <div class="flex flex-col w-full max-w-2xl">
+          <div class="flex p-4 border-b border-gray-700">
+            <i class="bi bi-person-circle" style="font-size:30px;"></i>
+            <div class="ml-4 flex flex-col">
+              <span class="font-bold text-white">test_user4</span>
+              <span class="text-gray-500">@test_user4</span>
+            </div> 
+            <button class="bg-white text-black rounded-full font-bold px-6 text-sm ml-auto">フォロー</button>
+          </div>
+        </div>
+      </div>
+      <!-- さらに表示ボタン -->
+      <button class="w-full text-blue-500 text-sm font-semibold mt-4 py-2 hover:bg-gray-700 rounded">
+        さらに表示
+      </button>
+    </div> 
+  </div>
+</div>
+
+{{ end }}

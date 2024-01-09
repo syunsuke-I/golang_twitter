@@ -17,6 +17,7 @@ const (
 )
 
 const tableNameUser = "users"
+const tableNameTweet = "tweets"
 
 type Database struct {
 	DB *gorm.DB
@@ -46,6 +47,19 @@ func (d *Database) CreateTables() error {
 	result := d.DB.Exec(cmdU)
 	if result.Error != nil {
 		return result.Error // エラーを返す
+	}
+
+	cmdT := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+	)`, tableNameTweet)
+
+	result = d.DB.Exec(cmdT)
+	if result.Error != nil {
+		return result.Error
 	}
 
 	return nil // 成功の場合は nil を返す

@@ -9,12 +9,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Validation interface {
+	Validate() error
+}
+
 type ErrorMsg struct {
 	EmailRequired          string `json:"emailRequired"`
+	TweetRequired          string `json:"tweetRequired"`
 	EmailLength            string `json:"emailLength"`
 	EmailFormat            string `json:"emailFormat"`
 	PasswordRequired       string `json:"passwordRequired"`
 	PasswordLength         string `json:"passwordLength"`
+	TweetLength            string `json:"tweetLength"`
 	PasswordAlphabet       string `json:"passwordAlphabet"`
 	PasswordNumber         string `json:"passwordNumber"`
 	PasswordSpecialChar    string `json:"passwordSpecialChar"`

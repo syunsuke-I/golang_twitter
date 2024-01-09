@@ -1,8 +1,32 @@
 {{ define "home/home.html"}}
 {{ template "common/header.html" .}}
-<body class="bg-black">
-  {{ template "common/error_fields.html" .}}
-  <h1 class="text-white">"{{.Email}}" </h1>
+<style>
+  .customGray{
+    background-color:rgb(32, 44, 55);
+  }
+  .follow{
+    color:rgb(77, 87, 98);
+  }
+  .right_content{
+    background-color:rgb(30, 39, 50);
+  }
+  .grid-container {
+  display: grid;
+  grid-template-columns: 1.2fr 2.3fr 1.5fr;
+}
+.submit-button:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+    color: #EFF3F4;
+  }
+</style>
+<script src="frontend/static/js/home.js"></script>
+<body>
+  <div class="grid grid-container customGray text-white">
+    {{ template "home/sidebar_left.html" .}}
+    {{ template "home/content_main.html" .}}
+    {{ template "home/sidebar_right.html" .}}
+  </div>
 </body>
 
 </html>
