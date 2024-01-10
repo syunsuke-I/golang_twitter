@@ -37,7 +37,7 @@ func (p *Repository) CreateTweet(t *Tweet) (*Tweet, error) {
 
 func (p *Repository) TweetsFind(id uint64) *[]Tweet {
 	var tweets []Tweet
-	p.DB.Where("user_id = ?", id).Find(&tweets)
+	p.DB.Order("updated_at desc").Where("user_id = ?", id).Find(&tweets)
 	return &tweets
 }
 
