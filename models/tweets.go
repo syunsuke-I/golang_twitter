@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -14,6 +15,13 @@ type Tweet struct {
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
 }
+
+type TweetsDto struct {
+	Page   Page    `json:"page"`
+	Tweets []Tweet `json:"tweets"`
+}
+
+var query_pagination Pagination
 
 func (p *Repository) CreateTweet(t *Tweet) (*Tweet, error) {
 
@@ -39,6 +47,19 @@ func (p *Repository) TweetsFind(id uint64) *[]Tweet {
 	var tweets []Tweet
 	p.DB.Order("updated_at desc").Where("user_id = ?", id).Find(&tweets)
 	return &tweets
+}
+
+func (p *Repository) GetTweets(context *gin.Context, uid uint64) (TweetsDto, error) {
+	var tweets []Tweet
+
+	totalElements := p.DB.Find(&tweets).RowsAffected
+	var page Page = ConvertContextAndTotalElementsToPage(context, int(totalElements))
+
+	if err := p.DB.Scopes(query_pagination.Pagination(page)).Order("updated_at desc").Where("user_id = ?", uid).Find(&tweets).Error; err != nil {
+		return TweetsDto{}, err
+	}
+
+	return TweetsDto{Page: page, Tweets: tweets}, nil
 }
 
 func (t Tweet) Validate() error {
