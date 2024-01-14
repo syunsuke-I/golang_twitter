@@ -1,3 +1,5 @@
 tmp/
 .vscode/settings.json
 node_modules/
+data/redis/dump.rdb
+data/redis/dump.rdb
