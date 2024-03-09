@@ -16,6 +16,11 @@ func Init(database *database.Database) {
 	db = database
 }
 
+type SignUpForm struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func SignUp(c *gin.Context) {
 
 	c.HTML(
@@ -60,23 +65,31 @@ func Activate(c *gin.Context) {
 
 func UserCreate(c *gin.Context) {
 	repo := models.NewRepository(db.DB)
-	email := c.PostForm("email")
+	var form SignUpForm
+
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	email := form.Email
 	token := models.GenerateTokenFromEmail(email)
+
 	user := models.User{
 		Email:           email,
-		Password:        c.PostForm("password"),
+		Password:        form.Password,
 		ActivationToken: token,
 	}
 
-	if _, errorMessages := repo.CreateUser(&user); errorMessages != nil {
-		messages := []string{errorMessages.Error()}
-		c.HTML(http.StatusBadRequest, "sign_up/sign_up.html", gin.H{
-			"errorMessages": messages,
-			"User":          user,
+	_, err := repo.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input", "details": err.Error()})
+	} else {
+		activationGenerator := utils.ActivationEmailGenerator{}
+		utils.SendMail(user.Email, "アクティベーションを完了してください。", activationGenerator, token)
+		c.JSON(http.StatusOK, gin.H{
+			"message": "アクティベーション用のメールを送信しました",
 		})
-		return
 	}
-	activationGenerator := utils.ActivationEmailGenerator{}
-	utils.SendMail(user.Email, "アクティベーションを完了してください。", activationGenerator, token)
-	c.Redirect(http.StatusMovedPermanently, "home")
+
 }
