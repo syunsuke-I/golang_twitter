@@ -88,7 +88,7 @@ func UserCreate(c *gin.Context) {
 		activationGenerator := utils.ActivationEmailGenerator{}
 		utils.SendMail(user.Email, "アクティベーションを完了してください。", activationGenerator, token)
 		c.JSON(http.StatusOK, gin.H{
-			"message": "アクティベーション用のメールを送信しました。\n ご登録いただいたメールアドレスをご確認ください",
+			"message": "アクティベーション用のメールを送信しました",
 		})
 	}
 
