@@ -45,7 +45,6 @@ func main() {
 
 	// ルーティング設定
 	r.GET("/", controllers.Top)
-	r.GET("/login", controllers.LoginPage)
 	r.POST("/login", func(c *gin.Context) {
 		controllers.Login(c, redisClient)
 	})
