@@ -45,12 +45,10 @@ func main() {
 
 	// ルーティング設定
 	r.GET("/", controllers.Top)
-	r.GET("/login", controllers.LoginPage)
 	r.POST("/login", func(c *gin.Context) {
 		controllers.Login(c, redisClient)
 	})
 	r.GET("/activate", controllers.Activate)
-	r.GET("/signup", controllers.SignUp)
 	r.POST("/signup", controllers.UserCreate)
 
 	// ログイン後にアクセスされるルートにセッション確認ミドルウェアを適用

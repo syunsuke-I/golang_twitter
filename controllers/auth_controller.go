@@ -21,15 +21,6 @@ type SignUpForm struct {
 	Password string `json:"password"`
 }
 
-func SignUp(c *gin.Context) {
-
-	c.HTML(
-		http.StatusOK,
-		"sign_up/sign_up.html",
-		gin.H{},
-	)
-}
-
 func Activate(c *gin.Context) {
 	errMsg, err := models.LoadConfig("settings/error_messages.json")
 	if err != nil {
@@ -39,14 +30,14 @@ func Activate(c *gin.Context) {
 	token := c.Query("token")
 	u, err := repo.FindUserByActivationToken(token)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"errorMessages": []string{errMsg.InvalidActivationToken},
 		})
 		return
 	}
 
 	if u == nil {
-		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"errorMessages": []string{errMsg.InvalidActivationToken},
 		})
 		return
@@ -54,13 +45,13 @@ func Activate(c *gin.Context) {
 
 	err = repo.ActivateUser(u)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "login/login.html", gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"errorMessages": []string{errMsg.InvalidActivationToken},
 		})
 		return
 	}
 
-	c.Redirect(http.StatusMovedPermanently, "home")
+	c.Redirect(302, "http://localhost:3000?redirected=true")
 }
 
 func UserCreate(c *gin.Context) {

@@ -11,18 +11,23 @@ import (
 	"github.com/syunsuke-I/golang_twitter/utils"
 )
 
-func LoginPage(c *gin.Context) {
-	c.HTML(
-		http.StatusOK,
-		"login/login.html",
-		gin.H{},
-	)
+type LoginForm struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func Login(c *gin.Context, redisClient redis.Conn) {
 	repo := models.NewRepository(db.DB)
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+
+	var form LoginForm
+
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	email := form.Email
+	password := form.Password
 
 	errMsg, err := models.LoadConfig("settings/error_messages.json")
 	if err != nil {
@@ -71,5 +76,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 	c.SetCookie("uid", strconv.FormatUint(u.ID, 10), 3600, "/", "localhost", true, true)
 
 	// ログイン成功
-	c.Redirect(http.StatusMovedPermanently, "home")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "ログインに成功しました",
+	})
 }
