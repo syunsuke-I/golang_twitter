@@ -9,9 +9,21 @@ import (
 	"github.com/syunsuke-I/golang_twitter/models"
 )
 
+type TweetForm struct {
+	Content string `json:"content"`
+}
+
 func TweetCreate(c *gin.Context) {
 	repo := models.NewRepository(db.DB)
-	content := c.PostForm("content")
+
+	var form TweetForm
+
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	content := form.Content
 
 	errMsg, err := models.LoadConfig("settings/error_messages.json")
 	if err != nil {
@@ -19,6 +31,7 @@ func TweetCreate(c *gin.Context) {
 	}
 
 	uid, err := c.Cookie("uid")
+	fmt.Println("Error searching uid:", uid)
 	if err != nil {
 		// セッションIDが見つからない場合はエラーハンドリング
 		c.HTML(http.StatusBadRequest, "login/login.html", gin.H{
@@ -48,5 +61,8 @@ func TweetCreate(c *gin.Context) {
 		})
 		return
 	}
-	c.Redirect(http.StatusMovedPermanently, "home")
+	// ログイン成功
+	c.JSON(http.StatusOK, gin.H{
+		"message": "ポストを送信しました",
+	})
 }
