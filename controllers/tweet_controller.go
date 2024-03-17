@@ -9,21 +9,17 @@ import (
 	"github.com/syunsuke-I/golang_twitter/models"
 )
 
-type TweetForm struct {
-	Content string `json:"content"`
-}
-
 func TweetCreate(c *gin.Context) {
 	repo := models.NewRepository(db.DB)
 
-	var form TweetForm
+	content := c.Request.FormValue("content")
+	file, err := c.FormFile("file")
+	println(file.Filename)
 
-	if err := c.ShouldBindJSON(&form); err != nil {
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	content := form.Content
 
 	errMsg, err := models.LoadConfig("settings/error_messages.json")
 	if err != nil {
