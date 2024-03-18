@@ -14,6 +14,7 @@ type Tweet struct {
 	Content   string    `gorm:"type:text;not null"`
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
+	ImgUrl    string    `gorm:"type:text"`
 }
 
 type TweetsDto struct {
@@ -33,6 +34,7 @@ func (p *Repository) CreateTweet(t *Tweet) (*Tweet, error) {
 	entry := Tweet{
 		UserID:  t.UserID,
 		Content: t.Content,
+		ImgUrl:  t.ImgUrl,
 	}
 
 	result := p.DB.Create(&entry)

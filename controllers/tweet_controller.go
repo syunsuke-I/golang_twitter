@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/syunsuke-I/golang_twitter/models"
+	"github.com/syunsuke-I/golang_twitter/utils"
 )
 
 func TweetCreate(c *gin.Context) {
@@ -14,7 +15,9 @@ func TweetCreate(c *gin.Context) {
 
 	content := c.Request.FormValue("content")
 	file, err := c.FormFile("file")
-	println(file.Filename)
+	fmt.Println(file.Filename)
+	url := utils.UploadImg(file, c)
+	fmt.Println(url)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -44,6 +47,7 @@ func TweetCreate(c *gin.Context) {
 	tweet := models.Tweet{
 		UserID:  userId,
 		Content: content,
+		ImgUrl:  url,
 	}
 
 	_, errorMessages := repo.CreateTweet(&tweet)

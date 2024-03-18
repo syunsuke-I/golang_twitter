@@ -53,6 +53,7 @@ func (d *Database) CreateTables() error {
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id),
     content TEXT NOT NULL,
+		img_url TEXT,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 	)`, tableNameTweet)
