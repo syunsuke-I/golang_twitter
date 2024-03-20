@@ -18,6 +18,7 @@ const (
 
 const tableNameUser = "users"
 const tableNameTweet = "tweets"
+const tableNameTweetImg = "images"
 
 type Database struct {
 	DB *gorm.DB
@@ -53,7 +54,6 @@ func (d *Database) CreateTables() error {
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id),
     content TEXT NOT NULL,
-		img_url TEXT,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 	)`, tableNameTweet)
@@ -63,7 +63,20 @@ func (d *Database) CreateTables() error {
 		return result.Error
 	}
 
-	return nil // 成功の場合は nil を返す
+	cmdTI := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+    id BIGSERIAL PRIMARY KEY,
+    tweet_id BIGINT NOT NULL REFERENCES tweets(id),
+		img_url TEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+	)`, tableNameTweetImg)
+
+	result = d.DB.Exec(cmdTI)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
 // Close はデータベース接続を閉じます。

@@ -41,7 +41,7 @@ func UploadImg(file *multipart.FileHeader, c *gin.Context) string {
 		return "error is occurred while file closing"
 	}
 
-	resImagePath := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, gcsFileName)
+	resImagePath := fmt.Sprintf("https://storage.cloud.google.com/%s/%s", bucketName, gcsFileName)
 
 	return resImagePath
 }
