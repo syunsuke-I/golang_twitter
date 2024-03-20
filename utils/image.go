@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"time"
 
@@ -12,13 +11,12 @@ import (
 	"google.golang.org/api/option"
 )
 
-func UploadImg(file *multipart.FileHeader, c *gin.Context) string {
-
+func UploadImg(file *multipart.FileHeader, c *gin.Context) (string, error) {
 	bucketName := "golang_twitter"
 
 	client, err := createGCSClient(c)
 	if err != nil {
-		log.Fatal(err)
+		return "", fmt.Errorf("failed to create GCS client: %w", err)
 	}
 
 	currentTime := time.Now()
@@ -26,7 +24,7 @@ func UploadImg(file *multipart.FileHeader, c *gin.Context) string {
 
 	src, err := file.Open()
 	if err != nil {
-		return "error is occurred while file opening"
+		return "", fmt.Errorf("error occurred while opening file: %w", err)
 	}
 	defer src.Close()
 
@@ -35,15 +33,15 @@ func UploadImg(file *multipart.FileHeader, c *gin.Context) string {
 
 	wc := obj.NewWriter(c)
 	if _, err = io.Copy(wc, src); err != nil {
-		return "error is occurred while file copying"
+		return "", fmt.Errorf("error occurred while copying file: %w", err)
 	}
 	if err = wc.Close(); err != nil {
-		return "error is occurred while file closing"
+		return "", fmt.Errorf("error occurred while closing file: %w", err)
 	}
 
-	resImagePath := fmt.Sprintf("https://storage.cloud.google.com/%s/%s", bucketName, gcsFileName)
+	resImagePath := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, gcsFileName)
 
-	return resImagePath
+	return resImagePath, nil
 }
 
 func createGCSClient(ctx *gin.Context) (*storage.Client, error) {

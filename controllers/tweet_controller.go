@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/syunsuke-I/golang_twitter/models"
@@ -50,7 +51,7 @@ func TweetCreate(c *gin.Context) {
 
 	entry, errorMessages := repo.CreateTweet(&tweet)
 
-	form, err := c.MultipartForm()
+	form, _ := c.MultipartForm()
 	var files []*multipart.FileHeader
 	for key, fileHeaders := range form.File {
 		if key == "images[]" || strings.HasPrefix(key, "images[") && strings.HasSuffix(key, "]") {
@@ -58,30 +59,44 @@ func TweetCreate(c *gin.Context) {
 		}
 	}
 
-	for _, file := range files {
-		url := utils.UploadImg(file, c)
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(files))
 
+	for _, file := range files {
+		wg.Add(1)
+		go func(file *multipart.FileHeader) {
+			defer wg.Done()
+
+			url, err := utils.UploadImg(file, c)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			fmt.Printf("Uploaded File: %s, Size: %d\n", file.Filename, file.Size)
+
+			imgUrl := models.Image{
+				ImgUrl:  url,
+				TweetID: entry.ID,
+			}
+
+			_, err = repo.CreateImage(&imgUrl)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			errChan <- nil
+		}(file)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	// エラーチェック
+	for err := range errChan {
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Save uploaded file err: %s", err.Error())
 			return
 		}
-		fmt.Printf("Uploaded File: %s, Size: %d\n", file.Filename, file.Size)
-
-		imgUrl := models.Image{
-			ImgUrl:  url,
-			TweetID: entry.ID,
-		}
-
-		_, errorMessages := repo.CreateImage(&imgUrl)
-		if errorMessages != nil {
-			messages := []string{errorMessages.Error()}
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message":       "画像の保存に失敗しました",
-				"errorMessages": messages,
-			})
-			return
-		}
-
 	}
 
 	// エラーがある場合はエラーメッセージを返す
