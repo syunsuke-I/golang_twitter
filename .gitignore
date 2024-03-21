@@ -3,3 +3,4 @@ tmp/
 node_modules/
 data/redis/dump.rdb
 data/redis/dump.rdb
+gcp.json

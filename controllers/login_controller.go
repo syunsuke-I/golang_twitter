@@ -73,7 +73,7 @@ func Login(c *gin.Context, redisClient redis.Conn) {
 		return
 	}
 
-	c.SetCookie("uid", strconv.FormatUint(u.ID, 10), 3600, "/", "localhost", true, true)
+	c.SetCookie("uid", strconv.FormatUint(u.ID, 10), 3600, "/", "localhost", false, false)
 
 	// ログイン成功
 	c.JSON(http.StatusOK, gin.H{
